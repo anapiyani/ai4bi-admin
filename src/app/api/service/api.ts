@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
-import { getCookie, setCookie } from './cookie'
+
+import { getCookie } from './cookie'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -11,13 +12,6 @@ const axiosInstance = axios.create({
   },
 });
 
-const axiosRefreshInstance = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${getCookie('access_token')}`,
-  },
-});
 
 axiosInstance.interceptors.request.use(
     (config) => {
@@ -54,7 +48,7 @@ const processQueue = (error: any, token: string | null = null) => {
 export const refreshToken = async (): Promise<void> => {
   try {
     const refresh_token = getCookie('refresh_token');
-    if (!refresh_token) throw new Error('No refresh token available');
+    if (!refresh_token) {throw new Error('No refresh token available');}
   } catch (error: any) {
     throw error;
   }
