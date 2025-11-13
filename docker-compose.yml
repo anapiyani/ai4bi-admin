@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  admin-frontend:
+    build:
+      context: ./
+    container_name: admin-frontend
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3005:3000"
