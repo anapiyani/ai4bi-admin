@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   createColumnHelper,
   flexRender,
@@ -12,20 +12,12 @@ import {
   type SortingState,
 } from '@tanstack/react-table';
 import {
-  ArrowDownToLine,
-  AlertTriangle,
   ChevronUp,
   ChevronDown,
 } from 'lucide-react';
 
-import { useSuppliers, type Supplier } from '@/hooks/useSuppliers';
+import { useSuppliers, CommercialOffer } from "@/hooks/useSuppliers";
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
   Table,
   TableBody,
@@ -37,48 +29,9 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 
-type SupplierStatus =
-  | 'invited'
-  | 'uploaded'
-  | 'declined'
-  | 'confirmed'
-  | 'no-response';
+const columnHelper = createColumnHelper<CommercialOffer>();
 
-const columnHelper = createColumnHelper<Supplier>();
-
-const STATUS_OPTIONS: {
-  value: SupplierStatus;
-  label: string;
-  color: string;
-}[] = [
-  {
-    value: 'invited',
-    label: 'Приглашён',
-    color: 'bg-[#EEF2F6] text-slate-700',
-  },
-  {
-    value: 'uploaded',
-    label: 'Загрузил КП',
-    color: 'bg-[#E0E9FB] text-slate-700',
-  },
-  {
-    value: 'declined',
-    label: 'Отклонил участие',
-    color: 'bg-[#FEE2E2] text-slate-700',
-  },
-  {
-    value: 'confirmed',
-    label: 'Подтвердил участие',
-    color: 'bg-[#E6F7E6] text-slate-700',
-  },
-  {
-    value: 'no-response',
-    label: 'Не ответил',
-    color: 'bg-[#FEF3C7] text-slate-700',
-  },
-];
-
-const columns = [
+const getColumns = (auctionType?: string) => [
   columnHelper.display({
     id: 'select',
     header: ({ table }) => (
@@ -104,147 +57,86 @@ const columns = [
     ),
     enableSorting: false,
   }),
-  columnHelper.accessor('name', {
+  columnHelper.accessor('commercial_offer_name', {
     header: () => <span className='text-sm font-medium'>Поставщик</span>,
     size: 172,
     cell: ({ getValue }) => (
       <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>{getValue()}</span>
     ),
   }),
-  columnHelper.accessor('status', {
+  columnHelper.accessor('amount_materials', {
     header: () => (
       <div className='flex items-center gap-1'>
-        <span className='text-sm font-medium'>Статус</span>
+        <span className='text-sm font-medium'>Материалы</span>
       </div>
     ),
     enableSorting: false,
-    cell: ({ row }) => {
-      const currentStatus = STATUS_OPTIONS.find(
-        (status) => status.value === row.original.status
-      );
-
-      return (
-        <div className='flex items-center gap-2'>
-          <span
-            className={cn(
-              'text-sm text-slate-900',
-              row.original.status === 'uploaded' ? 'font-medium' : 'font-normal'
-            )}
-          >
-            {currentStatus?.label ?? row.original.status}
-          </span>
-          {row.original.status === 'uploaded' && row.original.hasWarning && (
-            <AlertTriangle className='size-4 text-red-500' />
-          )}
-        </div>
-      );
-    },
+    cell: ({ getValue }) => (
+      <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>{getValue()}</span>
+    ),
   }),
-  columnHelper.accessor('cpAvailable', {
+  ...(auctionType?.toLowerCase() === 'default' ? [
+    columnHelper.accessor('amount_work', {
+      header: () => (
+        <div className='flex items-center gap-1'>
+          <span className='text-sm font-medium'>Работы</span>
+        </div>
+      ),
+      enableSorting: false,
+      cell: ({ getValue }) => (
+        <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>{getValue()}</span>
+      ),
+    }),
+  ] : []),
+  columnHelper.accessor('total_price', {
     header: () => (
       <div className='flex items-center gap-1'>
-        <span className='text-sm font-medium'>КП</span>
-        <div className='flex flex-col'>
-          <ChevronUp className='size-3 opacity-50' />
-          <ChevronDown className='size-3 opacity-50 -mt-1' />
-        </div>
+        <span className='text-sm font-medium'>Итого</span>
       </div>
     ),
     enableSorting: true,
-    cell: ({ row }) =>
-      row.original.cpAvailable ? (
-        <Button
-          variant='link'
-          className='flex items-center gap-1 !px-0 font-sans text-sm font-semibold leading-5 tracking-normal text-[#020617] hover:text-slate-700'
-        >
-          Скачать
-          <ArrowDownToLine className='size-4' />
-        </Button>
-      ) : (
-        <Button disabled variant="link" className='flex items-center gap-1 !px-0  text-sm text-[#64748B] italic'>Недоступна</Button>
-      ),
+    cell: ({ getValue }) => (
+      <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>{getValue()}</span>
+    ),
   }),
-  columnHelper.accessor('cpAmount', {
-    header: () => <span className='text-sm font-medium'>Сумма КП</span>,
+  columnHelper.accessor('advance', {
+    header: () => <span className='text-sm font-medium'>Аванс</span>,
     enableSorting: false,
-    cell: ({ getValue }) => {
-      const value = getValue();
-      if (!value) {return <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'></span>;}
-      return (
-        <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617] '>
-          {value.toLocaleString('ru-RU', { useGrouping: true }).replace(/,/g, ' ')}
-        </span>
-      );
-    },
+    cell: ({ getValue }) => (
+      <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>{getValue()}</span>
+    ),
   }),
-  columnHelper.accessor('currency', {
-    header: () => <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>Валюта</span>,
+  columnHelper.accessor('guarantee', {
+    header: () => <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>Тип аванса</span>,
     enableSorting: false,
     cell: ({ getValue }) => {
       const value = getValue();
       return <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>{value ?? ' '}</span>;
     },
   }),
-  columnHelper.display({
-    id: 'actions',
-    header: () => (
-      <span className='text-sm font-medium'>Действия участник...</span>
-    ),
+  columnHelper.accessor('bespoke_deadline', {
+    header: () => <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>Срок работы</span>,
     enableSorting: false,
-    cell: ({ row }) => {
-      const action = row.original.participantAction;
-      if (!action) {return <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'></span>;}
-      return <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>{action}</span>;
-    },
-  }),
-  columnHelper.accessor('uploadTime', {
-    header: () => <span className='text-sm font-medium'>Время загрузки</span>,
-    enableSorting: true,
     cell: ({ getValue }) => {
       const value = getValue();
-      return <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>{value ?? ''}</span>;
+      return <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>{value ? `${value} кд`:' '}</span>;
+    },
+  }),
+  columnHelper.accessor('price_after', {
+    header: () => <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>Сумма после</span>,
+    enableSorting: false,
+    cell: ({ getValue }) => {
+      const value = getValue();
+      return <span className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617]'>{value ? `${value}`:' '}</span>;
     },
   }),
   columnHelper.display({
-    id: 'comment',
-    header: () => <span className='text-sm font-medium'>Комментар...</span>,
+    id: 'comments',
+    header: () => <span className='text-sm font-medium'>Примечания</span>,
     enableSorting: false,
     cell: ({ getValue }) => {
       const value = getValue()
       return <div className='font-sans text-sm font-normal leading-5 tracking-normal text-[#020617] text-wrap'>{value as string ?? ""}</div>;
-    },
-  }),
-  columnHelper.display({
-    id: 'rowActions',
-    header: () => <span className='text-sm font-medium'></span>,
-    enableSorting: false,
-    cell: () => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant='ghost'
-              className='h-auto p-0 font-sans text-sm font-normal leading-5 tracking-normal text-[#020617] hover:bg-transparent'
-            >
-              ...
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align='end'
-            className='w-[200px] rounded-md border border-[#E2E8F0] bg-white p-2 shadow-md'
-          >
-            <DropdownMenuItem className='rounded-md px-4 py-2 font-sans text-sm font-normal leading-5 tracking-normal text-[#020617] hover:bg-[#eef3fb]'>
-              Зафиксировать цену
-            </DropdownMenuItem>
-            <DropdownMenuItem className='rounded-md px-4 py-2 font-sans text-sm font-normal leading-5 tracking-normal text-[#020617] hover:bg-[#eef3fb]'>
-              Отклонить участие
-            </DropdownMenuItem>
-            <DropdownMenuItem className='rounded-md px-4 py-2 font-sans text-sm font-normal leading-5 tracking-normal text-[#020617] hover:bg-[#eef3fb]'>
-              Отправить уведомление
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
     },
   }),
 ];
@@ -252,24 +144,29 @@ const columns = [
 interface AuctionSuppliersTableProps {
   auctionChatId: string;
   event: string;
+  lot: number;
 }
 
-export function AuctionSuppliersTable({ auctionChatId, event }: AuctionSuppliersTableProps) {
+export function AuctionSuppliersTable({ auctionChatId, event, lot }: AuctionSuppliersTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
-  const total = 0;
-  const { data } = useSuppliers({
+  const { data: supplier} = useSuppliers({
     auctionChatId,
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
     eventType: event
   });
+  const lots = supplier ? supplier?.protocol.lots[lot].commercial_offers : [];
+  const total = supplier ? supplier?.protocol.lots[lot].commercial_offers.length : 0;
+  const auctionType = supplier?.protocol.lots[lot]?.auction_type;
+  console.log(auctionType)
+  const columns = useMemo(() => getColumns(auctionType), [auctionType]);
 
   const table = useReactTable({
-    data,
+    data: lots ? lots :  [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

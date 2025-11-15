@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   createColumnHelper,
   flexRender,
@@ -20,6 +20,7 @@ import {
 import Link from 'next/link';
 
 import { useAuctions, type Auction } from '@/hooks/useAuctions';
+import { AuctionFiltersState } from '@/widgets/auction-toolbar';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -125,7 +126,12 @@ const formatDateTime = (date: string) => {
   return `${day}.${month}.${year}, ${hours}:${minutes}`;
 };
 
-export function AuctionsTable() {
+type AuctionsTableProps = {
+  filters?: AuctionFiltersState;
+  searchKey?: number;
+};
+
+export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -133,9 +139,32 @@ export function AuctionsTable() {
   });
   const { columnVisibility } = useColumns();
 
+  // Сбрасываем пагинацию на первую страницу только при нажатии кнопки "Искать"
+  useEffect(() => {
+    if (searchKey !== undefined && searchKey > 0) {
+      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    }
+  }, [searchKey]);
+
+  // Форматируем дату в строку формата YYYY-MM-DD для API
+  const formatDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const startDate = filters?.dateRange?.from ? formatDate(filters.dateRange.from) : undefined;
+  const endDate = filters?.dateRange?.to ? formatDate(filters.dateRange.to) : undefined;
+
   const { data, total, refetch } = useAuctions({
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
+    search: filters?.search,
+    region: filters?.region,
+    status: filters?.status as 'AuctionPlanning' | 'AuctionActive' | 'AuctionFinished' | 'AuctionEnd' | 'TechCouncilPlanning' | 'TechCouncilActive' | 'TechCouncilEnd' | 'TechCouncilFinished' | undefined,
+    startDate,
+    endDate,
   });
 
   const columns = useMemo(

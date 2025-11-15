@@ -8,7 +8,8 @@ import { AuctionDetailHeader } from '@/widgets/auction-detail-header';
 import { AuctionDetailInfo } from '@/widgets/auction-detail-info';
 import { AuctionSuppliersTable } from '@/widgets/auction-suppliers-table';
 import { AuctionProcessOverview } from '@/widgets/auction-process-overview';
-import { useAuction } from "@/hooks/useAuction";
+import { useSuppliers } from "@/hooks/useSuppliers";
+import { ChangeLot } from "@/features/change-supplier-lot";
 
 interface AuctionDetailContentProps {
   auctionChatId: string;
@@ -26,8 +27,13 @@ const formatDateTime = (date: string) => {
 export function AuctionDetailContent({ auctionChatId }: AuctionDetailContentProps) {
   const [activeTab, setActiveTab] = useState('about');
   const [event, setEvent] = useState('tender');
-  const { data: auctionData, isLoading, error } = useAuction(
-    auctionChatId);
+  const [lot, setLot] = useState<number>(0);
+  const { data: auctionData, isLoading, error } = useSuppliers(
+    {
+      auctionChatId: auctionChatId,
+      eventType: event,
+    },
+  );
 
   return (
     <div className='flex w-full flex-col gap-8'>
@@ -48,16 +54,19 @@ export function AuctionDetailContent({ auctionChatId }: AuctionDetailContentProp
                 status={auctionData.chat_status}
                 region={auctionData.region || undefined}
                 organizer={auctionData.organizer}
+                chat_id={auctionData.chat_id}
+                auction_id={auctionData.auction_id}
                 setEvent={setEvent}
                 event={event}
               />
-              <AuctionSuppliersTable auctionChatId={auctionChatId} event={event} />
+              <ChangeLot options={auctionData.protocol.lots} value={lot} onChange={setLot} />
+              <AuctionSuppliersTable auctionChatId={auctionChatId} event={event} lot={lot}/>
             </>
           ) : null}
         </>
       )}
 
-      {activeTab === 'overview' && <AuctionProcessOverview />}
+      {activeTab === 'overview' && auctionData && <AuctionProcessOverview chat_id={auctionData.chat_id}/>}
     </div>
   );
 }

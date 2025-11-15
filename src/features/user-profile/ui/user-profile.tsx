@@ -14,7 +14,6 @@ import { cn } from '@/lib/utils';
 
 export function UserProfile() {
   const { user, logout } = useAuth();
-
   const handleLogout = useCallback(() => {
     logout?.();
   }, [logout]);
@@ -35,7 +34,7 @@ export function UserProfile() {
         >
           <div>
             <p className='font-sans text-base font-semibold leading-6 tracking-normal text-[#020617]'>
-              {user.name}
+              {user.first_name + " " + user.last_name}
             </p>
             <p className='font-sans text-xs font-normal leading-4 tracking-normal align-middle text-[#64748B]'>
               {user.email}

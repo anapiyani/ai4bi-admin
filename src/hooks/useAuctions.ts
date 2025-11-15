@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
-type AuctionStatus = 'awaiting' | 'in-progress' | 'completed' | 'cancelled';
+type AuctionStatus = 'AuctionPlanning' | 'AuctionActive' | 'AuctionFinished' | 'AuctionEnd' | 'TechCouncilPlanning' | 'TechCouncilActive' | 'TechCouncilEnd' | 'TechCouncilFinished';
+
 type AuctionEventType = 'tender' | 'tech_council';
 
 export type Auction = {
@@ -23,6 +24,8 @@ type UseAuctionsParams = {
   status?: AuctionStatus;
   eventType?: AuctionEventType;
   region?: string;
+  startDate?: string;
+  endDate?: string;
 };
 
 type UseAuctionsResponse = {
@@ -47,10 +50,11 @@ export function useAuctions(params?: UseAuctionsParams): UseAuctionsResponse {
       const queryParams = new URLSearchParams();
       if (params?.page) {queryParams.append('page', params.page.toString());}
       if (params?.pageSize) {queryParams.append('page_size', params.pageSize.toString());}
-      if (params?.search) {queryParams.append('search', params.search);}
-      if (params?.status) {queryParams.append('status', params.status);}
-      if (params?.eventType) {queryParams.append('event_type', params.eventType);}
+      if (params?.search) {queryParams.append('search_prompt', params.search);}
+      if (params?.status) {queryParams.append('chat_status', params.status);}
       if (params?.region) {queryParams.append('region', params.region);}
+      if (params?.startDate) {queryParams.append('start_date', params.startDate);}
+      if (params?.endDate) {queryParams.append('end_date', params.endDate);}
 
       const url = `/api/auctions${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
       const response = await fetch(url, {method: 'GET'});
@@ -75,6 +79,8 @@ export function useAuctions(params?: UseAuctionsParams): UseAuctionsResponse {
     params?.status,
     params?.eventType,
     params?.region,
+    params?.startDate,
+    params?.endDate,
   ]);
 
   return {
