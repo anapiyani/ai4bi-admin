@@ -101,7 +101,7 @@ export function AuctionProcessOverview({chat_id}: {chat_id: string}) {
                     {recording.type && (
                       <>
                         <span>•</span>
-                        <span>{recording.type}</span>
+                        <span>{recording.type === "technical-council" ? "Тех. совет" : "Тендер"}</span>
                       </>
                     )}
                   </div>
