@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { ArrowLeftIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 import { AuctionDetailHeader } from '@/widgets/auction-detail-header';
 import { AuctionDetailInfo } from '@/widgets/auction-detail-info';
@@ -10,6 +12,8 @@ import { AuctionSuppliersTable } from '@/widgets/auction-suppliers-table';
 import { AuctionProcessOverview } from '@/widgets/auction-process-overview';
 import { useSuppliers } from "@/hooks/useSuppliers";
 import { ChangeLot } from "@/features/change-supplier-lot";
+
+import { Button } from '../../../components/ui/button'
 
 interface AuctionDetailContentProps {
   auctionChatId: string;
@@ -25,6 +29,7 @@ const formatDateTime = (date: string) => {
 };
 
 export function AuctionDetailContent({ auctionChatId }: AuctionDetailContentProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('about');
   const [event, setEvent] = useState('tender');
   const [lot, setLot] = useState<number>(0);
@@ -47,6 +52,10 @@ export function AuctionDetailContent({ auctionChatId }: AuctionDetailContentProp
             <div className='text-center py-8 text-red-500'>Ошибка загрузки данных</div>
           ) : auctionData ? (
             <>
+              <Button variant='outline' className='h-10 rounded-md border-slate-200 !bg-white px-4 text-sm font-medium text-slate-700 shadow-sm w-1/12' onClick={() => router.back()}>
+                <ArrowLeftIcon className='size-4' />
+                Назад
+              </Button>
               <AuctionDetailInfo
                 title={auctionData.name}
                 date={formatDateTime(auctionData.date)}

@@ -194,7 +194,7 @@ export function AuctionDetailInfo({
           <Select value={selectedStatus} onValueChange={setSelectedStatus}>
             <SelectTrigger
               className={cn(
-                'flex  w-[172px] items-center justify-between gap-[10px] rounded border border-[#E2E8F0] py-1 px-2 text-sm font-medium text-slate-700',
+                'flex  w-[200px] items-center justify-between gap-[10px] rounded border border-[#E2E8F0] py-1 px-2 text-sm font-medium text-slate-700',
                 statusConfig.bgColor
               )}
             >
