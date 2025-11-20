@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react';
 import { Download } from "lucide-react";
+import Link from "next/link";
 
 import { useRecording } from "@/hooks/useRecording";
 import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
 
 export function AuctionProcessOverview({chat_id}: {chat_id: string}) {
   const { data, isLoading, error, refetch } = useRecording(chat_id);
@@ -92,7 +92,7 @@ export function AuctionProcessOverview({chat_id}: {chat_id: string}) {
               >
                 <div className='flex-1 min-w-0'>
                   <p className='font-sans text-sm font-medium leading-5 tracking-normal text-[#020617] truncate'>
-                    {recording.filename}
+                    {recording.filename.slice(0, 30)}...
                   </p>
                   <div className='mt-1 flex items-center gap-4 text-xs text-[#64748B]'>
                     <span>{formatFileSize(recording.size)}</span>

@@ -34,9 +34,20 @@ export function useRecording(chatId: string): UseRecordingResponse {
       setIsLoading(true);
       setError(null);
 
-      const url = `/api/recordings/export/${chatId}`;
-      const response = await fetch(url, { method: 'GET' });
-      
+      const token = localStorage.getItem('token');
+
+      const url = `${process.env.NEXT_PUBLIC_RECORD_URL}/recordings/chat/${chatId}`;
+      const response = await fetch(
+        url, 
+        { 
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`Failed to fetch recording: ${response.statusText}`);
       }
