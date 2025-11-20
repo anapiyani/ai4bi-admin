@@ -108,7 +108,7 @@ export function AuctionProcessOverview({chat_id}: {chat_id: string}) {
                 </div>
                 <Link
                   href={recording.download_url}
-                  className='flex gap-1 items-center ml-4 h-9 gap-2 rounded-md border border-[#E2E8F0] bg-white px-4 text-sm font-medium text-[#020617] hover:bg-slate-50 disabled:opacity-50'
+                  className='flex items-center ml-4 h-9 gap-2 rounded-md border border-[#E2E8F0] bg-white px-4 text-sm font-medium text-[#020617] hover:bg-slate-50 disabled:opacity-50'
                 >
                   <Download className='size-4' />
                   Скачать
