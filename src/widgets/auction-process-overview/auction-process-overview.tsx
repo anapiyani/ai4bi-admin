@@ -92,7 +92,7 @@ export function AuctionProcessOverview({chat_id}: {chat_id: string}) {
               >
                 <div className='flex-1 min-w-0'>
                   <p className='font-sans text-sm font-medium leading-5 tracking-normal text-[#020617] truncate'>
-                    {recording.filename.slice(0, 30)}...
+                    {recording.type === "technical-council" ? "Технический совет" : "Тендер"}
                   </p>
                   <div className='mt-1 flex items-center gap-4 text-xs text-[#64748B]'>
                     <span>{formatFileSize(recording.size)}</span>
