@@ -102,6 +102,7 @@ type AuctionFiltersProps = {
   onStatusChange?: (value: string | undefined) => void;
   onDateRangeChange?: (value: DateRange | undefined) => void;
   onSearch?: () => void;
+  onClear?: () => void;
 };
 
 export function AuctionFilters({
@@ -114,6 +115,7 @@ export function AuctionFilters({
   onStatusChange,
   onDateRangeChange,
   onSearch,
+  onClear,
 }: AuctionFiltersProps) {
   const formatDateRange = useMemo(() => {
     if (!dateRange?.from || !dateRange?.to) {
@@ -132,7 +134,7 @@ export function AuctionFilters({
       />
 
       <Select onValueChange={onRegionChange} value={region}>
-        <SelectTrigger className='!h-10 w-[95px] rounded-md border-[#E2E8F0] bg-white px-3 text-sm font-normal leading-5 tracking-normal align-middle text-[#64748B]'>
+        <SelectTrigger className='!h-10 w-[120px] rounded-md border-[#E2E8F0] bg-white px-3 text-sm font-normal leading-5 tracking-normal align-middle text-[#64748B]'>
           <SelectValue placeholder='Регион' />
         </SelectTrigger>
         <SelectContent className='rounded-2xl bg-white shadow-lg'>
@@ -145,7 +147,7 @@ export function AuctionFilters({
       </Select>
 
       <Select onValueChange={onStatusChange} value={status}>
-        <SelectTrigger className='!h-10 w-[94px] rounded-md border-[#E2E8F0] bg-white px-3 text-sm font-normal leading-5 tracking-normal align-middle text-[#64748B]'>
+        <SelectTrigger className='!h-10 w-[220px] rounded-md border-[#E2E8F0] bg-white px-3 text-sm font-normal leading-5 tracking-normal align-middle text-[#64748B]'>
           <SelectValue placeholder='Статус' />
         </SelectTrigger>
         <SelectContent className='rounded-2xl bg-white shadow-lg'>
@@ -189,6 +191,9 @@ export function AuctionFilters({
         className='cursor-pointer h-10 w-[82px] gap-1.5 rounded-md bg-[#F1F5F9] py-2 px-4 font-sans text-sm font-medium leading-5 tracking-normal text-center align-middle text-[#0F172A] hover:bg-[#F1F5F9]'
       >
         Искать
+      </Button>
+      <Button variant='outline' className='cursor-pointer h-10 w-[82px] gap-1.5 rounded-md bg-[#F1F5F9] py-2 px-4 font-sans text-sm font-medium leading-5 tracking-normal text-center align-middle text-[#0F172A] hover:bg-[#F1F5F9]' onClick={onClear}>
+        Очистить
       </Button>
     </section>
   );

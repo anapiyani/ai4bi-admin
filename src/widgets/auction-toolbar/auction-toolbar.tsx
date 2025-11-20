@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
+
 import { AuctionFilters } from '@/widgets/auction-filters';
 import { ColumnsDropdown } from '@/widgets/columns-dropdown';
 
@@ -25,6 +26,23 @@ export function AuctionToolbar({ onParamsChange }: AuctionToolbarProps) {
     }
   };
 
+  const handleClear = () => {
+    setFilters({
+      search: '',
+      region: '',
+      status: '',
+      dateRange: undefined,
+    });
+    if (onParamsChange) {
+      onParamsChange({
+        search: '',
+        region: '',
+        status: '',
+        dateRange: undefined,
+      });
+    }
+  };
+
   return (
     <>
       <div className='flex w-full flex-wrap items-center justify-between gap-4'>
@@ -38,6 +56,7 @@ export function AuctionToolbar({ onParamsChange }: AuctionToolbarProps) {
           onStatusChange={(value: string | undefined) => setFilters((prev) => ({ ...prev, status: value }))}
           onDateRangeChange={(value) => setFilters((prev) => ({ ...prev, dateRange: value }))}
           onSearch={handleSearch}
+          onClear={handleClear}
         />
         <ColumnsDropdown />
       </div>
