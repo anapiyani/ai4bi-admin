@@ -40,6 +40,8 @@ import {
 import { cn } from '@/lib/utils';
 import { useColumns } from '@/widgets/columns-dropdown/columns-context';
 
+import { AuctionsTableSkeleton } from '../../components/skeletons/AuctionsTableSkeleton'
+
 
 type AuctionStatus = 'AuctionPlanning' | 'AuctionActive' | 'AuctionFinished' | 'AuctionEnd' | 'TechCouncilPlanning' | 'TechCouncilActive' | 'TechCouncilEnd' | 'TechCouncilFinished';
 type AuctionEventType = 'tender' | 'tech' | 'tech_council';
@@ -139,14 +141,12 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
   });
   const { columnVisibility } = useColumns();
 
-  // Сбрасываем пагинацию на первую страницу только при нажатии кнопки "Искать"
   useEffect(() => {
     if (searchKey !== undefined && searchKey > 0) {
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
     }
   }, [searchKey]);
 
-  // Форматируем дату в строку формата YYYY-MM-DD для API
   const formatDate = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -157,7 +157,7 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
   const startDate = filters?.dateRange?.from ? formatDate(filters.dateRange.from) : undefined;
   const endDate = filters?.dateRange?.to ? formatDate(filters.dateRange.to) : undefined;
 
-  const { data, total, refetch } = useAuctions({
+  const { data, total, refetch, isLoading } = useAuctions({
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
     search: filters?.search,
@@ -378,6 +378,10 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
     pagination.pageIndex * pagination.pageSize + pagination.pageSize,
     totalRows
   );
+
+  if (isLoading) {
+    return <AuctionsTableSkeleton />;
+  }
 
   return (
     <div className='rounded-md px-4'>
