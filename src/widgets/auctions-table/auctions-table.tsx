@@ -23,13 +23,6 @@ import { useAuctions, type Auction } from '@/hooks/useAuctions';
 import { AuctionFiltersState } from '@/widgets/auction-toolbar';
 import { Button } from '@/components/ui/button';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
   Table,
   TableBody,
   TableCell,
@@ -44,14 +37,8 @@ import { AuctionsTableSkeleton } from '../../components/skeletons/AuctionsTableS
 
 
 type AuctionStatus = 'AuctionPlanning' | 'AuctionActive' | 'AuctionFinished' | 'AuctionEnd' | 'TechCouncilPlanning' | 'TechCouncilActive' | 'TechCouncilEnd' | 'TechCouncilFinished';
-type AuctionEventType = 'tender' | 'tech' | 'tech_council';
 
 const columnHelper = createColumnHelper<Auction>();
-
-const EVENT_TYPE_OPTIONS: { value: AuctionEventType; label: string }[] = [
-  { value: 'tender', label: 'Тендер' },
-  { value: 'tech_council', label: 'Тех. совет' },
-];
 
 const STATUS_OPTIONS: {
   value: AuctionStatus;
@@ -105,18 +92,6 @@ const STATUS_OPTIONS: {
   },
 ];
 
-const REGIONS = [
-  'Астана',
-  'Алматы',
-  'Шымкент',
-  'Караганда',
-  'Тараз',
-  'Өскемен',
-  'Павлодар',
-  'Ақтөбе',
-  'Семей',
-  'Көкшетау',
-];
 
 const formatDateTime = (date: string) => {
   const d = new Date(date);
@@ -210,31 +185,11 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
         enableSorting: false,
         size: 173,
         cell: ({ row }) => (
-          <Select
-            value={row.original.event_type}
-            onValueChange={(value: AuctionEventType) => {
-              // TODO: Update event_type via API
-              console.log('Update event_type for', row.original.auction_chat_id, 'to', value);
-            }}
-          >
-            <SelectTrigger
-              className={cn(
-                'flex h-7 w-[156px] items-center justify-between gap-[10px] rounded border border-[#E2E8F0] py-1 px-2 text-sm font-medium text-slate-700',
-                row.original.event_type === 'tender'
-                  ? 'bg-[#F0FDF4]'
-                  : 'bg-[#E0F2FE]'
-              )}
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className='rounded-md border border-[#E2E8F0] bg-white shadow-md'>
-              {EVENT_TYPE_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <span className={`font-sans text-sm font-normal leading-5 tracking-normal text-slate-700 ${row.original.event_type === 'tender' ? 'bg-[#F0FDF4]' : 'bg-[#E0F2FE]'} rounded-full py-1 px-2 w-[156px] text-center`}>
+            <span className={`font-sans text-sm font-normal leading-5 tracking-normal text-slate-700 ${row.original.event_type === 'tender' ? 'bg-[#F0FDF4]' : 'bg-[#E0F2FE]'} rounded-full py-1 px-2 w-[156px] text-center`}>
+              {row.original.event_type === 'tender' ? 'Тендер' : 'Тех. совет'}
+            </span>
+          </span>
         ),
       }),
       columnHelper.accessor('chat_status', {
@@ -285,32 +240,12 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
           const StatusIcon = statusConfig.icon;
           const textColor = statusConfig.textColor;
           return (  
-            <Select
-              value={row.original.chat_status || undefined}
-              onValueChange={(value: AuctionStatus) => {
-                // TODO: Update chat_status via API
-                console.log('Update chat_status for', row.original.auction_chat_id, 'to', value);
-              }}
-            >
-              <SelectTrigger
-                className={cn(
-                  'flex h-7 min-w-[172px] items-center justify-between gap-[10px] rounded border border-[#E2E8F0] py-1 px-2 text-sm font-medium text-slate-700',
-                  statusConfig.bgColor
-                )}
-              >
-                <div className={`flex items-center gap-2 ${textColor}`}>
-                  {StatusIcon && <StatusIcon size={16} className={textColor} />}
-                  <SelectValue className={textColor} placeholder='Неизвестно' />
-                </div>
-              </SelectTrigger>
-              <SelectContent className='rounded-md border border-[#E2E8F0] bg-white shadow-md'>
-                {STATUS_OPTIONS.map((status) => (
-                  <SelectItem key={status.value} value={status.value}>
-                    {status.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className={`flex items-center justify-center gap-2 ${statusConfig.bgColor} rounded-full py-1 px-2 w-fit text-center`}>
+              {StatusIcon && <StatusIcon size={16} className={textColor} />}
+              <span className={`font-sans text-sm font-normal leading-5 tracking-normal ${textColor} text-center`}>
+                {STATUS_OPTIONS.find((status) => status.value === row.original.chat_status)?.label || 'Неизвестно'}
+              </span>
+            </div>
           );
         },
       }),
@@ -319,26 +254,11 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
         header: () => <span>Регион</span>,
         enableSorting: false,
         cell: ({ row }) => (
-          <Select
-            value={row.original.region || undefined}
-            onValueChange={(value: string) => {
-              // TODO: Update region via API
-              console.log('Update region for', row.original.auction_chat_id, 'to', value);
-            }}
-          >
-            <SelectTrigger className='flex h-7 w-[156px] items-center justify-between gap-[10px] rounded border border-[#E2E8F0] bg-white py-1 px-2 text-sm font-medium text-slate-700'>
-              <SelectValue placeholder='Неизвестно'>
+            <div className='flex items-center gap-2'>
+              <span className='font-sans text-sm font-normal leading-5 tracking-normal text-slate-700'>
                 {row.original.region || 'Неизвестно'}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className='rounded-md border border-[#E2E8F0] bg-white shadow-md'>
-              {REGIONS.map((region) => (
-                <SelectItem key={region} value={region}>
-                  {region}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              </span>
+            </div>
         ),
       }),
       columnHelper.accessor('organizer', {

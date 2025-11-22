@@ -10,7 +10,6 @@ export const DEFAULT_COLUMNS: Array<{ id: string; label: string }> = [
   { id: 'status', label: 'Статус' },
   { id: 'region', label: 'Регион' },
   { id: 'organizer', label: 'Организатор' },
-  { id: 'kpi', label: 'Статус КП' },
 ];
 
 type ColumnsContextType = {
