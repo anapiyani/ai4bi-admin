@@ -159,10 +159,22 @@ export function AuctionSuppliersTable({ auctionChatId, event, lot }: AuctionSupp
     pageSize: pagination.pageSize,
     eventType: event
   });
-  const lots = supplier ? supplier?.protocol.lots[lot].commercial_offers : [];
-  const total = supplier ? supplier?.protocol.lots[lot].commercial_offers.length : 0;
+  const lots =
+    supplier &&
+    supplier.protocol &&
+    Array.isArray(supplier.protocol.lots) &&
+    supplier.protocol.lots[lot] &&
+    Array.isArray(supplier.protocol.lots[lot].commercial_offers)
+      ? supplier.protocol.lots[lot].commercial_offers
+      : [];
+  const total = supplier &&
+    supplier.protocol &&
+    Array.isArray(supplier.protocol.lots) &&
+    supplier.protocol.lots[lot] &&
+    Array.isArray(supplier.protocol.lots[lot].commercial_offers)
+    ? supplier.protocol.lots[lot].commercial_offers.length
+    : 0;
   const auctionType = supplier?.protocol.lots[lot]?.auction_type;
-  console.log(auctionType)
   const columns = useMemo(() => getColumns(auctionType), [auctionType]);
 
   const table = useReactTable({
