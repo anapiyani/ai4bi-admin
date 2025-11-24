@@ -143,7 +143,6 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
         id: 'name',
         header: () => <span>Наименование</span>,
         enableSorting: false,
-        size: 172,
         cell: ({ row }) => (
           <Link
             href={`/auctions/${row.original.auction_chat_id}`}
@@ -258,6 +257,7 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
       }),
       columnHelper.accessor('organizer', {
         id: 'organizer',
+        size: 172,
         header: () => <span>Организатор</span>,
         enableSorting: false,
         cell: ({ getValue }) => (
@@ -331,7 +331,7 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
                   key={cell.id}
                   className={cn(
                     'p-3',
-                    index === 0 && 'w-[172px] max-w-[172px]'
+                    index === 0 && 'w-full max-w-[264px]'
                   )}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
