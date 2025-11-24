@@ -45,7 +45,7 @@ export function AuctionToolbar({ onParamsChange }: AuctionToolbarProps) {
 
   return (
     <>
-      <div className='flex w-full flex-wrap items-center justify-between gap-4'>
+      <div className='flex w-full flex-wrap items-center justify-between gap-4 pr-4'>
         <AuctionFilters
           search={filters.search}
           region={filters.region}
