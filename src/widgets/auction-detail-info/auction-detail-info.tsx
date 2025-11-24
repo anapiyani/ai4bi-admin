@@ -240,7 +240,6 @@ export function AuctionDetailInfo({
               </div>
               <div className='flex flex-col'>
                 <span className='text-sm font-semibold text-slate-900'>{title.slice(0, 26)}...</span>
-                {/* <span className='text-xs text-slate-500'>100 KB | Nov 24, 20:08</span> */}
               </div>
             </div>
           </div>
@@ -256,7 +255,6 @@ export function AuctionDetailInfo({
               </div>
               <div className='flex flex-col'>
                 <span className='text-sm font-semibold text-slate-900'>{title.slice(0, 26)}...</span>
-                {/* <span className='text-xs text-slate-500'>100 KB | Nov 24, 20:08</span> */}
               </div>
             </div>
           </div>

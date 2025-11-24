@@ -27,13 +27,7 @@ const REGIONS = [
   'Астана',
   'Алматы',
   'Шымкент',
-  'Караганда',
-  'Тараз',
-  'Өскемен',
-  'Павлодар',
-  'Ақтөбе',
-  'Семей',
-  'Көкшетау',
+  'Атырау',
 ];
 
 type AuctionStatus = 'AuctionPlanning' | 'AuctionActive' | 'AuctionFinished' | 'AuctionEnd' | 'TechCouncilPlanning' | 'TechCouncilActive' | 'TechCouncilEnd' | 'TechCouncilFinished';
