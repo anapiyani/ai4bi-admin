@@ -239,8 +239,8 @@ export function AuctionDetailInfo({
                 <ArrowDownToLine className='size-4 text-slate-600' />
               </div>
               <div className='flex flex-col'>
-                <span className='text-sm font-semibold text-slate-900'>File name</span>
-                <span className='text-xs text-slate-500'>100 KB | Nov 24, 20:08</span>
+                <span className='text-sm font-semibold text-slate-900'>{title.slice(0, 26)}...</span>
+                {/* <span className='text-xs text-slate-500'>100 KB | Nov 24, 20:08</span> */}
               </div>
             </div>
           </div>
@@ -255,8 +255,8 @@ export function AuctionDetailInfo({
                 <ArrowDownToLine className='size-4 text-slate-600' />
               </div>
               <div className='flex flex-col'>
-                <span className='text-sm font-semibold text-slate-900'>File name</span>
-                <span className='text-xs text-slate-500'>100 KB | Nov 24, 20:08</span>
+                <span className='text-sm font-semibold text-slate-900'>{title.slice(0, 26)}...</span>
+                {/* <span className='text-xs text-slate-500'>100 KB | Nov 24, 20:08</span> */}
               </div>
             </div>
           </div>
