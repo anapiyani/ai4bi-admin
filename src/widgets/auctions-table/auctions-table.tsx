@@ -15,7 +15,7 @@ import {
   CheckCircle,
   Clock,
   Radio,
-  XCircle,
+
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -60,13 +60,13 @@ const STATUS_OPTIONS: {
   },
   {
     value: 'AuctionFinished',
-    label: 'Тендер завершен',
+    label: 'Мероприятие завершен',
     color: 'bg-[#E6F9EB] text-[#047857]',
   },
   {
     value: 'AuctionEnd',
-    label: 'Тендер отменен',
-    color: 'bg-[#FEEAEA] text-[#DC2626]',
+    label: 'Тендер завершен',
+    color: 'bg-[#FEEAEA] text-[#ffa826]',
   },
   {
     value: 'TechCouncilPlanning',
@@ -79,11 +79,6 @@ const STATUS_OPTIONS: {
     label: 'Тех совет в процессе',
     color: 'bg-[#E8EDFF] text-[#4338CA]',
     icon: 'play',
-  },
-  {
-    value: 'TechCouncilEnd',
-    label: 'Тех совет отменен',
-    color: 'bg-[#FEEAEA] text-[#DC2626]',
   },
   {
     value: 'TechCouncilFinished',
@@ -213,7 +208,6 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
                   icon: Radio,
                 };
               case "AuctionFinished":
-              case "TechCouncilFinished":
                 return {
                   bgColor: "bg-[#F0FDF4]",
                   textColor: "text-[#15803D]",
@@ -221,10 +215,11 @@ export function AuctionsTable({ filters, searchKey }: AuctionsTableProps) {
                 };
               case 'AuctionEnd':
               case "TechCouncilEnd":
+              case "TechCouncilFinished":
                 return {
-                  bgColor: "bg-[#FEF2F2]",
-                  textColor: "text-[#DC2626]",
-                  icon: XCircle,
+                  bgColor: 'bg-[#EFF6FF]',
+                  textColor: "text-slate-700",
+                  icon: CheckCircle,
                 };
               default:
                 return {

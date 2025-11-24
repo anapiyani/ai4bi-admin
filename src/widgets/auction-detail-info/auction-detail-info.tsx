@@ -81,13 +81,13 @@ const STATUS_OPTIONS: {
   },
   {
     value: 'AuctionFinished',
-    label: 'Тендер завершен',
+    label: 'Мероприятие завершен',
     color: 'bg-[#E6F9EB] text-[#047857]',
   },
   {
     value: 'AuctionEnd',
-    label: 'Тендер отменен',
-    color: 'bg-[#FEEAEA] text-[#DC2626]',
+    label: 'Тендер завершен',
+    color: 'bg-[#FEEAEA] text-[#ffa826]',
   },
   {
     value: 'TechCouncilPlanning',
@@ -100,11 +100,6 @@ const STATUS_OPTIONS: {
     label: 'Тех совет в процессе',
     color: 'bg-[#E8EDFF] text-[#4338CA]',
     icon: 'play',
-  },
-  {
-    value: 'TechCouncilEnd',
-    label: 'Тех совет отменен',
-    color: 'bg-[#FEEAEA] text-[#DC2626]',
   },
   {
     value: 'TechCouncilFinished',
