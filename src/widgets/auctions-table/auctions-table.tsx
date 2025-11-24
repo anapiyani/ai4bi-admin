@@ -60,7 +60,7 @@ const STATUS_OPTIONS: {
   },
   {
     value: 'AuctionFinished',
-    label: 'Мероприятие завершен',
+    label: 'Мероприятие завершено',
     color: 'bg-[#E6F9EB] text-[#047857]',
   },
   {

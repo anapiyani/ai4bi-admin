@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ArrowDownToLine,
   CheckCircle,
@@ -9,20 +9,8 @@ import {
   XCircle,
 } from 'lucide-react';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { downloadFile } from '@/shared/lib/download-file';
-
-const EVENT_TYPE_OPTIONS: { value: string; label: string }[] = [
-  { value: 'tender', label: 'Тендер' },
-  { value: 'tech', label: 'Тех. совет' },
-];
 
 const getStatusConfig = (status: string) => {
   switch (status) {
@@ -81,7 +69,7 @@ const STATUS_OPTIONS: {
   },
   {
     value: 'AuctionFinished',
-    label: 'Мероприятие завершен',
+    label: 'Мероприятие завершено',
     color: 'bg-[#E6F9EB] text-[#047857]',
   },
   {
@@ -132,10 +120,8 @@ export function AuctionDetailInfo({
   auction_id,
   setEvent
 }: AuctionDetailInfoProps) {
-  const [selectedStatus, setSelectedStatus] = useState(status);
+  const statusConfig = getStatusConfig(status as string);
   const [selectedRegion] = useState(region);
-
-  const statusConfig = getStatusConfig(selectedStatus as string);
   const StatusIcon = statusConfig.icon;
 
   const handleExportTechProtocol = async () => {
@@ -153,6 +139,11 @@ export function AuctionDetailInfo({
       console.error('Failed to download file:', error);
     }
   }
+
+  useEffect(() => {
+    setEvent(eventType || "Тендер")
+  }, [eventType])
+
   return (
     <div className='flex h-[182px] w-full flex-col gap-4 rounded-lg border border-[#E2E8F0] py-6 px-8'>
       <div>
@@ -163,51 +154,32 @@ export function AuctionDetailInfo({
       <div className='flex flex-wrap items-start  gap-9'>
         <div className='flex flex-col justify-center gap-1'>
           <span className='text-sm font-medium text-slate-600'>Тип мероприятия:</span>
-          <Select value={eventType} onValueChange={setEvent}>
-            <SelectTrigger
-              className={cn(
-                'flex h-7 w-[156px] items-center justify-between gap-[10px] rounded border border-[#E2E8F0] py-1 px-2 text-sm font-medium text-slate-700',
-                eventType === 'tender'
+          <div className='flex items-center gap-2'>
+              <span className={`flex h-7 w-full items-center gap-[10px] rounded text-center justify-center py-1 border px-2 text-sm font-medium text-slate-700 ${eventType === 'tender'
                   ? 'bg-[#F0FDF4]'
-                  : 'bg-[#E0F2FE]'
-              )}
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className='rounded-md border border-[#E2E8F0] bg-white shadow-md'>
-              {EVENT_TYPE_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                  : 'bg-[#E0F2FE]'}`}>
+                {eventType === "tender" ? "Тендер" : "Тех. совет"}
+              </span>
+          </div>
         </div>
 
         <div className='flex flex-col justify-center gap-1'>
           <span className='text-sm font-medium text-slate-600'>Статус:</span>
-          <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-            <SelectTrigger
-              className={cn(
-                'flex  w-[200px] items-center justify-between gap-[10px] rounded border border-[#E2E8F0] py-1 px-2 text-sm font-medium text-slate-700',
-                statusConfig.bgColor
+          <div
+            className={cn(
+              'flex w-[200px] items-center justify-between gap-[10px] rounded border border-[#E2E8F0] py-1 px-2 text-sm font-medium text-slate-700',
+              statusConfig.bgColor
+            )}
+          >
+            <div className={`flex items-center gap-2 ${statusConfig.textColor}`}>
+              {StatusIcon && (
+                <StatusIcon size={16} className={statusConfig.textColor} />
               )}
-            >
-              <div className={`flex items-center gap-2 ${statusConfig.textColor}`}>
-                {StatusIcon && (
-                  <StatusIcon size={16} className={statusConfig.textColor} />
-                )}
-                <SelectValue className={statusConfig.textColor} />
-              </div>
-            </SelectTrigger>
-            <SelectContent className='rounded-md border border-[#E2E8F0] bg-white shadow-md'>
-              {STATUS_OPTIONS.map((status) => (
-                <SelectItem key={status.value} value={status.value}>
-                  {status.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              <span className={statusConfig.textColor}>
+                {STATUS_OPTIONS.find((s) => s.value === status)?.label || status}
+              </span>
+            </div>
+          </div>
         </div>
 
         <div className='flex flex-col justify-center gap-1'>
@@ -227,7 +199,7 @@ export function AuctionDetailInfo({
         <div className='h-12 w-px bg-[#E2E8F0]' />
 
         <div className='flex gap-9'>
-          <div className='flex h-16 w-[183px] flex-col gap-1 p-0 cursor-pointer' onClick={handleExportTechProtocol}>
+          <div className='flex h-16 w-[240px] flex-col gap-1 p-0 cursor-pointer' onClick={handleExportTechProtocol}>
             <h3 className='text-sm font-semibold text-[#64748B]'>Протокол тех. совета</h3>
             <div className='flex items-center gap-3'>
               <div className='flex p-[10px] items-center justify-center rounded bg-[#F1F5F9]'>
@@ -240,7 +212,7 @@ export function AuctionDetailInfo({
           </div>
 
           <div 
-            className='flex h-16 w-[183px] flex-col gap-1 p-0 cursor-pointer' 
+            className='flex h-16 w-[240px] flex-col gap-1 p-0 cursor-pointer' 
             onClick={handleExportAuction}
           >
             <h3 className='text-sm font-semibold text-[#64748B]'>Протокол тендера</h3>
